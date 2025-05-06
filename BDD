@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS mesures (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+    latitude REAL,
+    longitude REAL,
+    pression REAL,
+    temperature REAL,
+    humidite REAL,
+    vitesse_vent REAL
+);
+.exit
