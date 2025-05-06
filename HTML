@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Données météo – Ballon anti-grêle</title>
+    <style>
+        body { font-family: Arial; background: #f4fff4; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #66bb6a; color: white; }
+        h1 { color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Historique complet des mesures météo</h1>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Pression (hPa)</th>
+            <th>Température (°C)</th>
+            <th>Humidité (%)</th>
+            <th>Vent (km/h)</th>
+        </tr>
+        <?php
+        // Connexion à la base SQLite
+        $db = new SQLite3('pression.db');
+
+        // Requête : on récupère toutes les données
+        $results = $db->query("SELECT * FROM mesures ORDER BY id DESC");
+
+        while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+            echo \"<tr>\";
+            echo \"<td>{$row['timestamp']}</td>\";
+            echo \"<td>{$row['latitude']}</td>\";
+            echo \"<td>{$row['longitude']}</td>\";
+            echo \"<td>{$row['pression']}</td>\";
+            echo \"<td>{$row['temperature']}</td>\";
+            echo \"<td>{$row['humidite']}</td>\";
+            echo \"<td>{$row['vitesse_vent']}</td>\";
+            echo \"</tr>\";
+        }
+        ?>
+    </table>
+</body>
+</html>
