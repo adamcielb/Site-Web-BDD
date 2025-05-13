@@ -25,7 +25,7 @@
         </tr>
         <?php
         // Connexion à la base SQLite
-        $db = new SQLite3('pression.db');
+        $db = new SQLite3('meteo.db');
 
         // Requête : on récupère toutes les données
         $results = $db->query("SELECT * FROM mesures ORDER BY id DESC");
