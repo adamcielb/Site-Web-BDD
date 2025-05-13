@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS mesures (
+CREATE TABLE mesures (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TEXT NOT NULL,
     latitude REAL,
@@ -9,3 +9,4 @@ CREATE TABLE IF NOT EXISTS mesures (
     vitesse_vent REAL
 );
 .exit
+
