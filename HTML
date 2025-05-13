@@ -2,46 +2,112 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Données météo – Ballon anti-grêle</title>
+    <title>Station Ballon Anti-Grêle</title>
     <style>
-        body { font-family: Arial; background: #f4fff4; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #66bb6a; color: white; }
-        h1 { color: #2e7d32; }
+        body {
+            font-family: sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 30px;
+        }
+        .btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0b7dda;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-bottom: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <h1>Historique complet des mesures météo</h1>
+
+<h1>Station Ballon Anti-Grêle</h1>
+
+<!-- SECTION 1 : Données météo actuelles -->
+<div class="section">
+    <h2>Données météo actuelles</h2>
     <table>
         <tr>
-            <th>Date</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Pression (hPa)</th>
+            <th>Date / Heure</th>
             <th>Température (°C)</th>
             <th>Humidité (%)</th>
-            <th>Vent (km/h)</th>
+            <th>Pression (hPa)</th>
+            <th>Vent (m/s)</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
         </tr>
         <?php
-        // Connexion à la base SQLite
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
+
         $db = new SQLite3('meteo.db');
+        $last = $db->querySingle("SELECT MAX(id) FROM mesures");
 
-        // Requête : on récupère toutes les données
-        $results = $db->query("SELECT * FROM mesures ORDER BY id DESC");
-
-        while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
-            echo \"<tr>\";
-            echo \"<td>{$row['timestamp']}</td>\";
-            echo \"<td>{$row['latitude']}</td>\";
-            echo \"<td>{$row['longitude']}</td>\";
-            echo \"<td>{$row['pression']}</td>\";
-            echo \"<td>{$row['temperature']}</td>\";
-            echo \"<td>{$row['humidite']}</td>\";
-            echo \"<td>{$row['vitesse_vent']}</td>\";
-            echo \"</tr>\";
+        if ($last !== null) {
+            $res = $db->query("SELECT * FROM mesures WHERE id = $last");
+            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                echo "<tr>
+                    <td>{$row['timestamp']}</td>
+                    <td>{$row['temperature']}</td>
+                    <td>{$row['humidite']}</td>
+                    <td>{$row['pression']}</td>
+                    <td>{$row['vitesse_vent']}</td>
+                    <td>{$row['latitude']}</td>
+                    <td>{$row['longitude']}</td>
+                </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='7'>Aucune donnée disponible</td></tr>";
         }
         ?>
     </table>
+</div>
+
+<!-- SECTION 2 : Historique (texte simple pour l’instant) -->
+<div class="section">
+    <h2>Historique des relevés</h2>
+    <p>Cette section permettra au chef de culture de consulter les anciens relevés météo enregistrés dans la base de données.</p>
+</div>
+
+<!-- SECTION 3 : Déclenchement -->
+<div class="section">
+    <h2>Déclenchement du ballon</h2>
+    <p>Appuyez sur le bouton pour simuler le lancement du ballon anti-grêle.</p>
+    <button class="btn" onclick="alert('Ballon déclenché (simulation)')">Déclencher le ballon</button>
+</div>
+
 </body>
 </html>
