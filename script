@@ -1,0 +1,49 @@
+<?php
+$db = new SQLite3('/var/www/html/station_data.db');
+
+$url = "https://eu1.cloud.thethings.network/api/v3/as/applications/station-vigne/packages/storage/uplink_message?last=1m";
+$headers = [
+    "Authorization: Bearer VKFSJ75H6O2MMBJXM6QJDLDV36PAHZUHKEAYW7I",
+    "Accept: application/json"
+];
+
+$curl = curl_init();
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_RETURNTRANSFER => true
+]);
+
+$response = curl_exec($curl);
+curl_close($curl);
+
+$lines = explode("\n", $response);
+
+foreach ($lines as $line) {
+    $data = json_decode($line, true);
+    if (!isset($data['result']['uplink_message'])) continue;
+
+    $ts = $data['result']['received_at'];
+    $payload = $data['result']['uplink_message']['decoded_payload'] ?? [];
+    $gps = $data['result']['uplink_message']['locations']['user'] ?? ['latitude' => 0, 'longitude' => 0];
+
+    $temperature = $payload['temperature'] ?? null;
+    $humidite = $payload['humidite'] ?? null;
+    $pression = $payload['pression'] ?? null;
+    $vitesse_vent = $payload['vitesse_vent'] ?? null;
+    $latitude = $gps['latitude'];
+    $longitude = $gps['longitude'];
+
+    if ($temperature !== null) {
+        $stmt = $db->prepare("INSERT INTO mesures (timestamp, temperature, humidite, pression, vitesse_vent, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bindValue(1, $ts);
+        $stmt->bindValue(2, $temperature);
+        $stmt->bindValue(3, $humidite);
+        $stmt->bindValue(4, $pression);
+        $stmt->bindValue(5, $vitesse_vent);
+        $stmt->bindValue(6, $latitude);
+        $stmt->bindValue(7, $longitude);
+        $stmt->execute();
+    }
+}
+?>
