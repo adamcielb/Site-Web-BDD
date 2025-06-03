@@ -73,7 +73,7 @@
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
 
-        $db = new SQLite3('meteo.db');
+        $db = new SQLite3('ballon_data.db');
         $last = $db->querySingle("SELECT MAX(id) FROM mesures");
 
         if ($last !== null) {
